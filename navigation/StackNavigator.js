@@ -1,5 +1,5 @@
 import { createStackNavigator } from "@react-navigation/stack";
-import TabNavigator from "./TabNavigator";
+import DrawerNavigator from "./DrawerNavigator";
 import Meditacao from "../screens/meditacao";
 
 const Stack = createStackNavigator();
@@ -8,8 +8,8 @@ export default function StackNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Tabs"
-        component={TabNavigator}
+        name="Menu"
+        component={DrawerNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen name="Meditacao" component={Meditacao} />
