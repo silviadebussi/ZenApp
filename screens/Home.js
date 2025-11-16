@@ -1,18 +1,47 @@
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import { globalStyles } from "../theme/globalStyles";
+import { FlatList, SafeAreaView, StyleSheet } from "react-native";
+import CardMeditacao from "../components/CardMeditacao";
+import { useNavigation } from "@react-navigation/native";
 
-export default function HomeScreen() {
+export default function Home() {
+  const nav = useNavigation();
+
+  const meditations = [
+    {
+      id: 1,
+      titulo: "Respiração Profunda",
+      descricao: "Alivie o estresse em 2 minutos",
+    },
+    {
+      id: 2,
+      titulo: "Relaxamento Guiado",
+      descricao: "Perfeito para ansiedade",
+    },
+  ];
+
   return (
-    <View style={globalStyles.container}>
-      <Text style={globalStyles.title}>Bem-vinda ao Zen App 🌿</Text>
-      <Text style={globalStyles.subtitle}>
-        Encontre calma, foco e equilíbrio interior.
-      </Text>
-
-      <TouchableOpacity style={globalStyles.button}>
-        <Text style={globalStyles.buttonText}>Iniciar Meditação</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={meditations}
+        keyExtractor={(i) => i.id.toString()}
+        renderItem={({ item }) => (
+          <CardMeditacao
+            titulo={item.titulo}
+            descricao={item.descricao}
+            onPress={() =>
+              nav.navigate("Meditacao", {
+                id: item.id,
+                titulo: item.titulo,
+                descricao: item.descricao,
+              })
+            }
+          />
+        )}
+      />
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20 },
+});
