@@ -1,10 +1,13 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, Button, useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Meditacao({ route }) {
   const { titulo, descricao, id } = route.params;
+
+  const theme = useColorScheme();
+  const isDark = theme === "dark";
 
   async function salvarFavorito() {
     const stored = await AsyncStorage.getItem("favoritos");
@@ -18,17 +21,33 @@ export default function Meditacao({ route }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>{titulo}</Text>
-      <Text style={styles.desc}>{descricao}</Text>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: isDark ? "#000" : "#fff" }
+      ]}
+    >
+      <Text style={[styles.titulo, { color: isDark ? "#fff" : "#000" }]}>
+        {titulo}
+      </Text>
 
-      <Button title="Salvar nos Favoritos" onPress={salvarFavorito} />
+      <Text style={[styles.desc, { color: isDark ? "#ccc" : "#333" }]}>
+        {descricao}
+      </Text>
+
+      <View style={{ marginTop: 20 }}>
+        <Button
+          title="Salvar nos Favoritos"
+          onPress={salvarFavorito}
+          color={isDark ? "#888" : undefined} 
+        />
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20 },
-  titulo: { fontSize: 26, fontWeight: "bold" },
-  desc: { fontSize: 16, marginVertical: 10 },
+  titulo: { fontSize: 26, fontWeight: "bold", marginBottom: 10 },
+  desc: { fontSize: 16, lineHeight: 22 },
 });
