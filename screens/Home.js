@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
-import { FlatList, SafeAreaView, StyleSheet } from "react-native";
-import CardMeditacao from "../components/CardMeditacao";
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { ThemeContext } from "../context/ThemeContext";
+import getGlobalStyles from "../styles/global";
+import { useColorScheme } from "react-native";
 
 export default function Home() {
   const nav = useNavigation();
-  const { dark } = useContext(ThemeContext);
+  const theme = useColorScheme();
+  const styles = getGlobalStyles(theme === "dark");
 
   const meditations = [
     { id: 1, titulo: "Respiração Profunda", descricao: "Alivie o estresse" },
@@ -14,29 +16,23 @@ export default function Home() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, dark && styles.dark]}>
+    <SafeAreaView style={styles.screen}>
       <FlatList
         data={meditations}
         keyExtractor={(i) => i.id.toString()}
         renderItem={({ item }) => (
-          <CardMeditacao
-            titulo={item.titulo}
-            descricao={item.descricao}
+          <TouchableOpacity
             onPress={() =>
-              nav.navigate("Meditacao", {
-                id: item.id,
-                titulo: item.titulo,
-                descricao: item.descricao,
-              })
+              nav.navigate("Meditacao", { ...item })
             }
-          />
+          >
+            <View style={styles.card}>
+              <Text style={styles.text}>{item.titulo}</Text>
+              <Text style={styles.mutedText}>{item.descricao}</Text>
+            </View>
+          </TouchableOpacity>
         )}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  dark: { backgroundColor: "#111" },
-});

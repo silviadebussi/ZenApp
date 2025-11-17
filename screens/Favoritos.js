@@ -1,41 +1,57 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import CardMeditacao from "../components/CardMeditacao";
+import getGlobalStyles from "../styles/global";
+import { useColorScheme } from "react-native";
 
 export default function Favoritos() {
   const [favoritos, setFavoritos] = useState([]);
+  const theme = useColorScheme();
+  const styles = getGlobalStyles(theme === "dark");
 
   async function loadFavoritos() {
     const stored = await AsyncStorage.getItem("favoritos");
-    if (stored) setFavoritos(JSON.parse(stored));
+    setFavoritos(stored ? JSON.parse(stored) : []);
   }
 
-  useEffect(() => {
-    loadFavoritos();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      loadFavoritos();
+    }, [])
+  );
+
+  async function removerFavorito(id) {
+    const novos = favoritos.filter((item) => item.id !== id);
+    setFavoritos(novos);
+    await AsyncStorage.setItem("favoritos", JSON.stringify(novos));
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.titulo}>Meditações Favoritas</Text>
+    <SafeAreaView style={styles.screen}>
+      <Text style={styles.title}>Meditações Favoritas</Text>
 
       <FlatList
         data={favoritos}
         keyExtractor={(item) => item.id.toString()}
+        ListEmptyComponent={
+          <Text style={styles.mutedText}>Nenhum favorito ainda</Text>
+        }
         renderItem={({ item }) => (
-          <CardMeditacao
-            titulo={item.titulo}
-            descricao={item.descricao}
-          />
+          <View style={styles.card}>
+            <CardMeditacao titulo={item.titulo} descricao={item.descricao} />
+
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: "#C45555", marginTop: 12 }]}
+              onPress={() => removerFavorito(item.id)}
+            >
+              <Text style={styles.buttonText}>Remover</Text>
+            </TouchableOpacity>
+          </View>
         )}
-        ListEmptyComponent={<Text>Nenhum favorito ainda</Text>}
       />
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  titulo: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-});

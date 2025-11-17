@@ -1,53 +1,34 @@
 import React from "react";
-import { View, Text, StyleSheet, Button, useColorScheme } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import getGlobalStyles from "../styles/global";
+import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Meditacao({ route }) {
   const { titulo, descricao, id } = route.params;
 
-  const theme = useColorScheme();
-  const isDark = theme === "dark";
-
   async function salvarFavorito() {
     const stored = await AsyncStorage.getItem("favoritos");
     const lista = stored ? JSON.parse(stored) : [];
 
-    const jaExiste = lista.some((item) => item.id === id);
-    if (!jaExiste) {
+    if (!lista.some((i) => i.id === id)) {
       lista.push({ id, titulo, descricao });
       await AsyncStorage.setItem("favoritos", JSON.stringify(lista));
     }
   }
 
+  const theme = useColorScheme();
+  const styles = getGlobalStyles(theme === "dark");
+
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: isDark ? "#000" : "#fff" }
-      ]}
-    >
-      <Text style={[styles.titulo, { color: isDark ? "#fff" : "#000" }]}>
-        {titulo}
-      </Text>
+    <SafeAreaView style={styles.screen}>
+      <Text style={styles.title}>{titulo}</Text>
+      <Text style={styles.text}>{descricao}</Text>
 
-      <Text style={[styles.desc, { color: isDark ? "#ccc" : "#333" }]}>
-        {descricao}
-      </Text>
-
-      <View style={{ marginTop: 20 }}>
-        <Button
-          title="Salvar nos Favoritos"
-          onPress={salvarFavorito}
-          color={isDark ? "#888" : undefined} 
-        />
-      </View>
+      <TouchableOpacity style={styles.button} onPress={salvarFavorito}>
+        <Text style={styles.buttonText}>Salvar nos Favoritos</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  titulo: { fontSize: 26, fontWeight: "bold", marginBottom: 10 },
-  desc: { fontSize: 16, lineHeight: 22 },
-});
