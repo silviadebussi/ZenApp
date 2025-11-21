@@ -1,29 +1,23 @@
 {
   "expo": {
-    "name": "ZenRoutine",
-    "slug": "ZenRoutine",
+    "name": "ZenApp",
+    "slug": "zenapp",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "icon": "./assets/cha.png",
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/cha.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
+      "backgroundColor": "#ADD8E6"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
+        "foregroundImage": "./assets/cha.png",
+        "backgroundColor": "#ADD8E6"
+      }
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
+    "ios": {
+      "supportsTablet": true
     }
   }
 }

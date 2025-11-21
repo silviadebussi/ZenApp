@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 const zenColors = {
   light: {
-    background: "#F6F6F3",
+    background: "#ADD8E6", 
     card: "#FFFFFF",
     text: "#1A1A1A",
     textSecondary: "#7A7A7A",
@@ -10,7 +10,7 @@ const zenColors = {
     primaryDark: "#3E6D69",
   },
   dark: {
-    background: "#0D0D0D",
+    background: "#ADD8E6", 
     card: "#1A1A1A",
     text: "#F6F6F6",
     textSecondary: "#A0A0A0",
