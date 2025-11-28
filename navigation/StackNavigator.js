@@ -4,6 +4,7 @@ import DrawerNavigator from "./DrawerNavigator";
 import Login from "../screens/Login";
 import Cadastro from "../screens/Cadastro";
 import Meditacao from "../screens/meditacao";
+import EditarPerfil from "../screens/EditarPerfil"; 
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,9 @@ export default function StackNavigator() {
 
       <Stack.Screen name="Menu" component={DrawerNavigator} />
       <Stack.Screen name="Meditacao" component={Meditacao} />
+
+      {/* NOVA TELA */}
+      <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
 
     </Stack.Navigator>
   );

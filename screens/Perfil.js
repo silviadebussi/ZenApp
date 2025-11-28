@@ -6,9 +6,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 
-import { getAuth } from "firebase/auth";
+import { auth, db } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
-export default function Perfil() {
+export default function Perfil({ navigation }) {
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
@@ -27,15 +28,21 @@ export default function Perfil() {
         }
       }
 
-      function loadUser() {
-        const auth = getAuth();
+      async function loadUser() {
         const user = auth.currentUser;
+        if (!user) return;
 
-        if (user) {
+       
+        const userRef = doc(db, "users", user.uid);
+        const snapshot = await getDoc(userRef);
+
+        if (snapshot.exists()) {
+          setUserData(snapshot.data());
+        } else {
           setUserData({
             name: user.displayName || "Usuário",
             email: user.email,
-            photo: user.photoURL,
+            photo: user.photoURL || null,
           });
         }
       }
@@ -98,6 +105,7 @@ export default function Perfil() {
       />
 
       <TouchableOpacity
+        onPress={() => navigation.navigate("EditarPerfil")}
         style={{
           backgroundColor: "#4A8E7F",
           padding: 12,

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, db } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 
@@ -10,15 +11,37 @@ export default function Cadastro({ navigation }) {
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
+  const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
   const handleCadastro = async () => {
+    setErro("");
+
+    if (!nome.trim()) {
+      setErro("Digite seu nome");
+      return;
+    }
+
     try {
-      await createUserWithEmailAndPassword(auth, email, senha);
+      
+      const userCred = await createUserWithEmailAndPassword(auth, email, senha);
+      const user = userCred.user;
+
+      
+      await updateProfile(user, { displayName: nome });
+
+     
+      await setDoc(doc(db, "users", user.uid), {
+        name: nome,
+        email: email,
+        photo: null,
+      });
+
       navigation.replace("Menu");
     } catch (err) {
+      console.log(err);
       setErro("Erro ao criar conta");
     }
   };
@@ -30,6 +53,15 @@ export default function Cadastro({ navigation }) {
       {erro ? <Text style={[styles.text, { color: "red" }]}>{erro}</Text> : null}
 
       <View style={styles.card}>
+        
+        <TextInput
+          placeholder="Nome"
+          placeholderTextColor="#999"
+          style={styles.input}
+          value={nome}
+          onChangeText={setNome}
+        />
+
         <TextInput
           placeholder="Email"
           placeholderTextColor="#999"
@@ -52,8 +84,11 @@ export default function Cadastro({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={styles.text}>Já tenho conta</Text>
+          <Text style={[styles.text, { marginTop: 10 }]}>
+            Já tenho conta
+          </Text>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
