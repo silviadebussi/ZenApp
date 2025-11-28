@@ -6,13 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 
+import { getAuth } from "firebase/auth";
+
 export default function Perfil() {
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
   const [favCount, setFavCount] = useState(0);
+  const [userData, setUserData] = useState(null);
 
-  
   useFocusEffect(
     useCallback(() => {
       async function loadFavorites() {
@@ -25,16 +27,41 @@ export default function Perfil() {
         }
       }
 
+      function loadUser() {
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+          setUserData({
+            name: user.displayName || "Usuário",
+            email: user.email,
+            photo: user.photoURL,
+          });
+        }
+      }
+
       loadFavorites();
+      loadUser();
     }, [])
   );
 
+  if (!userData) {
+    return (
+      <SafeAreaView style={styles.screen}>
+        <Text style={styles.text}>Carregando perfil...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.screen}>
-
       <View style={{ alignItems: "center", marginBottom: 25 }}>
         <Image
-          source={require("../assets/image_app.png")}
+          source={
+            userData.photo
+              ? { uri: userData.photo }
+              : require("../assets/image_app.png")
+          }
           style={{
             width: 120,
             height: 120,
@@ -45,8 +72,8 @@ export default function Perfil() {
         <Text style={styles.title}>Seu Perfil</Text>
       </View>
 
-      <Text style={styles.text}>Nome: Silvia</Text>
-      <Text style={styles.mutedText}>Usuária do ZenRoutine</Text>
+      <Text style={styles.text}>Nome: {userData.name}</Text>
+      <Text style={styles.mutedText}>Email: {userData.email}</Text>
 
       <View
         style={{
