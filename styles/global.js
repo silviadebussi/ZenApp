@@ -2,18 +2,18 @@ import { StyleSheet } from "react-native";
 
 const zenColors = {
   light: {
-    background: "#ADD8E6", 
+    background: "#F2F7FA", 
     card: "#FFFFFF",
     text: "#1A1A1A",
-    textSecondary: "#7A7A7A",
+    textSecondary: "#6A6A6A",
     primary: "#5C8D89",
     primaryDark: "#3E6D69",
   },
   dark: {
-    background: "#ADD8E6", 
-    card: "#1A1A1A",
-    text: "#F6F6F6",
-    textSecondary: "#A0A0A0",
+    background: "#0F1416",
+    card: "#1E1E1E",
+    text: "#F2F2F2",
+    textSecondary: "#A8A8A8",
     primary: "#7EC8C3",
     primaryDark: "#5AA39E",
   },
@@ -32,7 +32,7 @@ export default function getGlobalStyles(isDark) {
 
     title: {
       fontSize: 28,
-      fontWeight: "600",
+      fontWeight: "700",
       color: colors.text,
       marginBottom: 20,
       textAlign: "center",
@@ -54,11 +54,12 @@ export default function getGlobalStyles(isDark) {
       borderRadius: 16,
       padding: 20,
       marginBottom: 16,
+
       shadowColor: "#000",
-      shadowOpacity: 0.07,
-      shadowOffset: { width: 0, height: 3 },
+      shadowOpacity: isDark ? 0.25 : 0.1,
+      shadowOffset: { width: 0, height: 2 },
       shadowRadius: 6,
-      elevation: 3,
+      elevation: isDark ? 6 : 3,
     },
 
     button: {
@@ -83,12 +84,14 @@ export default function getGlobalStyles(isDark) {
       fontSize: 16,
       color: colors.text,
       marginBottom: 16,
+      borderWidth: 1,
+      borderColor: isDark ? "#333" : "#DDD",
     },
 
     separator: {
       height: 1,
       width: "100%",
-      backgroundColor: isDark ? "#333" : "#DDD",
+      backgroundColor: isDark ? "#2A2A2A" : "#DADADA",
       marginVertical: 18,
     },
 

@@ -1,14 +1,25 @@
 import React, { useContext } from "react";
-import { View, Text, Switch } from "react-native";
+import { View, Text, Switch, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { ThemeContext } from "../context/ThemeContext";
 
+import { signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import { useNavigation } from "@react-navigation/native";
+
 export default function Configs() {
   const { dark, toggleTheme } = useContext(ThemeContext);
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
+
+  const navigation = useNavigation();
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    navigation.replace("Login"); 
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -20,6 +31,12 @@ export default function Configs() {
           <Switch value={dark} onValueChange={toggleTheme} />
         </View>
       </View>
+
+      
+      <TouchableOpacity style={styles.button} onPress={handleLogout}>
+        <Text style={styles.buttonText}>Sair</Text>
+      </TouchableOpacity>
+
     </SafeAreaView>
   );
 }
