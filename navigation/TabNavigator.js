@@ -12,7 +12,7 @@ export default function TabNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
-        tabBarStyle: { height: 70, paddingBottom: 10 }, // aumentei a altura e padding
+        tabBarStyle: { height: 70, paddingBottom: 10 },
       }}
     >
       <Tab.Screen

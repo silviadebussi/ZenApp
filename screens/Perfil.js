@@ -1,10 +1,9 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, Image, View, TouchableOpacity } from "react-native";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect } from "@react-navigation/native";
 
 import { auth, db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
@@ -15,47 +14,71 @@ export default function Perfil({ navigation }) {
 
   const [favCount, setFavCount] = useState(0);
   const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useFocusEffect(
-    useCallback(() => {
-      async function loadFavorites() {
-        try {
-          const stored = await AsyncStorage.getItem("favoritos");
-          const list = stored ? JSON.parse(stored) : [];
-          setFavCount(list.length);
-        } catch (e) {
-          console.log("Erro ao carregar favoritos", e);
-        }
+  useEffect(() => {
+
+    async function loadFavorites() {
+      try {
+        const stored = await AsyncStorage.getItem("favoritos");
+        const list = stored ? JSON.parse(stored) : [];
+        setFavCount(list.length);
+      } catch (e) {
+        console.log("Erro ao carregar favoritos", e);
+      }
+    }
+
+    loadFavorites();
+
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        setUserData(null);
+        setLoading(false);
+        return;
       }
 
-      async function loadUser() {
-        const user = auth.currentUser;
-        if (!user) return;
-
-       
+      try {
         const userRef = doc(db, "users", user.uid);
         const snapshot = await getDoc(userRef);
 
         if (snapshot.exists()) {
-          setUserData(snapshot.data());
+          const data = snapshot.data();
+
+          setUserData({
+            nome: data.nome || user.displayName || "Usuário",
+            email: data.email || user.email,
+            fotoURL: data.fotoURL || user.photoURL || null,
+          });
         } else {
           setUserData({
-            name: user.displayName || "Usuário",
+            nome: user.displayName || "Usuário",
             email: user.email,
-            photo: user.photoURL || null,
+            fotoURL: user.photoURL || null,
           });
         }
+
+      } catch (e) {
+        console.log("Erro ao obter dados do usuário:", e);
       }
 
-      loadFavorites();
-      loadUser();
-    }, [])
-  );
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.screen}>
+        <Text style={styles.text}>Carregando perfil...</Text>
+      </SafeAreaView>
+    );
+  }
 
   if (!userData) {
     return (
       <SafeAreaView style={styles.screen}>
-        <Text style={styles.text}>Carregando perfil...</Text>
+        <Text style={styles.text}>Nenhum usuário logado.</Text>
       </SafeAreaView>
     );
   }
@@ -65,8 +88,8 @@ export default function Perfil({ navigation }) {
       <View style={{ alignItems: "center", marginBottom: 25 }}>
         <Image
           source={
-            userData.photo
-              ? { uri: userData.photo }
+            userData.fotoURL
+              ? { uri: userData.fotoURL }
               : require("../assets/image_app.png")
           }
           style={{
@@ -76,10 +99,11 @@ export default function Perfil({ navigation }) {
             marginBottom: 10,
           }}
         />
+
         <Text style={styles.title}>Seu Perfil</Text>
       </View>
 
-      <Text style={styles.text}>Nome: {userData.name}</Text>
+      <Text style={styles.text}>Nome: {userData.nome}</Text>
       <Text style={styles.mutedText}>Email: {userData.email}</Text>
 
       <View

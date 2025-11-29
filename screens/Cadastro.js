@@ -1,95 +1,75 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
-import getGlobalStyles from "../styles/global";
-import { useColorScheme } from "react-native";
 
 export default function Cadastro({ navigation }) {
-  const theme = useColorScheme();
-  const styles = getGlobalStyles(theme === "dark");
-
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [erro, setErro] = useState("");
 
-  const handleCadastro = async () => {
-    setErro("");
-
-    if (!nome.trim()) {
-      setErro("Digite seu nome");
+  const registrar = async () => {
+    if (!nome || !email || !senha) {
+      Alert.alert("Erro", "Preencha todos os campos!");
       return;
     }
 
     try {
-      
-      const userCred = await createUserWithEmailAndPassword(auth, email, senha);
-      const user = userCred.user;
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email.trim(),
+        senha
+      );
 
-      
+      const user = userCredential.user;
+
       await updateProfile(user, { displayName: nome });
 
-     
       await setDoc(doc(db, "users", user.uid), {
-        name: nome,
+        nome: nome,
         email: email,
-        photo: null,
+        fotoURL: null,
       });
 
-      navigation.replace("Menu");
-    } catch (err) {
-      console.log(err);
-      setErro("Erro ao criar conta");
+      Alert.alert("Sucesso!", "Conta criada com sucesso!");
+
+    } catch (error) {
+      Alert.alert("Erro ao cadastrar", error.message);
     }
   };
 
   return (
-    <SafeAreaView style={styles.screen}>
-      <Text style={styles.title}>Criar Conta</Text>
+    <View style={{ padding: 20 }}>
+      <Text>Nome</Text>
+      <TextInput value={nome} onChangeText={setNome} />
 
-      {erro ? <Text style={[styles.text, { color: "red" }]}>{erro}</Text> : null}
+      <Text>Email</Text>
+      <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" />
 
-      <View style={styles.card}>
-        
-        <TextInput
-          placeholder="Nome"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={nome}
-          onChangeText={setNome}
-        />
+      <Text>Senha</Text>
+      <TextInput
+        value={senha}
+        secureTextEntry
+        onChangeText={setSenha}
+      />
 
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#999"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
+      <TouchableOpacity onPress={registrar} style={{ marginTop: 15 }}>
+        <Text>Cadastrar</Text>
+      </TouchableOpacity>
 
-        <TextInput
-          placeholder="Senha"
-          placeholderTextColor="#999"
-          style={styles.input}
-          secureTextEntry
-          value={senha}
-          onChangeText={setSenha}
-        />
-
-        <TouchableOpacity style={styles.button} onPress={handleCadastro}>
-          <Text style={styles.buttonText}>Cadastrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-          <Text style={[styles.text, { marginTop: 10 }]}>
-            Já tenho conta
-          </Text>
-        </TouchableOpacity>
-
-      </View>
-    </SafeAreaView>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Login")}
+        style={{ marginTop: 15 }}
+      >
+        <Text>Já tenho conta</Text>
+      </TouchableOpacity>
+    </View>
   );
 }

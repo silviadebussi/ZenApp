@@ -7,18 +7,15 @@ import { ThemeContext } from "../context/ThemeContext";
 
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { useNavigation } from "@react-navigation/native";
 
 export default function Configs() {
   const { dark, toggleTheme } = useContext(ThemeContext);
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
-  const navigation = useNavigation();
-
   const handleLogout = async () => {
     await signOut(auth);
-    navigation.replace("Login"); 
+ 
   };
 
   return (
@@ -32,11 +29,9 @@ export default function Configs() {
         </View>
       </View>
 
-      
       <TouchableOpacity style={styles.button} onPress={handleLogout}>
         <Text style={styles.buttonText}>Sair</Text>
       </TouchableOpacity>
-
     </SafeAreaView>
   );
 }

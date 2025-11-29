@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, reload } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 
 export default function EditarPerfil({ navigation }) {
   const user = auth.currentUser;
 
-  const [name, setName] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [nome, setNome] = useState("");
+  const [fotoURL, setFotoURL] = useState("");
 
   useEffect(() => {
     async function loadUser() {
       if (!user) return;
-      setName(user.displayName || "");
 
-   
-      if (user.photoURL) setPhoto(user.photoURL);
+  
+      setNome(user.displayName || "");
+      if (user.photoURL) setFotoURL(user.photoURL);
+
+     
       const ref = doc(db, "users", user.uid);
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
         const data = snap.data();
-        if (data.name) setName(data.name);
-        if (data.photo) setPhoto(data.photo);
+        if (data.nome) setNome(data.nome);
+        if (data.fotoURL) setFotoURL(data.fotoURL);
       }
     }
 
@@ -35,17 +37,19 @@ export default function EditarPerfil({ navigation }) {
     if (!user) return;
 
     try {
-    
+     
       await updateProfile(user, {
-        displayName: name,
-        photoURL: photo || null,
+        displayName: nome,
+        photoURL: fotoURL || null,
       });
 
-      
+    
+      await reload(user);
+
       await setDoc(doc(db, "users", user.uid), {
-        name,
+        nome,
         email: user.email,
-        photo,
+        fotoURL,
       });
 
       alert("Perfil atualizado!");
@@ -64,9 +68,7 @@ export default function EditarPerfil({ navigation }) {
 
       <Image
         source={
-          photo
-            ? { uri: photo }
-            : require("../assets/image_app.png")
+          fotoURL ? { uri: fotoURL } : require("../assets/image_app.png")
         }
         style={{
           width: 120,
@@ -79,8 +81,8 @@ export default function EditarPerfil({ navigation }) {
 
       <Text style={{ fontSize: 16, marginBottom: 5 }}>Nome</Text>
       <TextInput
-        value={name}
-        onChangeText={setName}
+        value={nome}
+        onChangeText={setNome}
         placeholder="Seu nome"
         style={{
           backgroundColor: "#fff",
@@ -94,8 +96,8 @@ export default function EditarPerfil({ navigation }) {
 
       <Text style={{ fontSize: 16, marginBottom: 5 }}>URL da Foto</Text>
       <TextInput
-        value={photo}
-        onChangeText={setPhoto}
+        value={fotoURL}
+        onChangeText={setFotoURL}
         placeholder="https://exemplo.com/foto.jpg"
         style={{
           backgroundColor: "#fff",
