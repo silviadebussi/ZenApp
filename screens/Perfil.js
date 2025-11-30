@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Text, Image, View, TouchableOpacity } from "react-native";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { auth, db } from "../firebaseConfig";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 
-export default function Perfil({ navigation }) {
+export default function Perfil({ navigation, route }) {
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
@@ -16,8 +17,19 @@ export default function Perfil({ navigation }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useFocusEffect(
+    useCallback(() => {
+      async function refreshAuth() {
+        const u = auth.currentUser;
+        if (u) {
+          await u.reload();
+        }
+      }
+      refreshAuth();
+    }, [])
+  );
 
+  useEffect(() => {
     async function loadFavorites() {
       try {
         const stored = await AsyncStorage.getItem("favoritos");
@@ -30,41 +42,34 @@ export default function Perfil({ navigation }) {
 
     loadFavorites();
 
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    const unsubAuth = auth.onAuthStateChanged((user) => {
       if (!user) {
         setUserData(null);
         setLoading(false);
         return;
       }
 
-      try {
-        const userRef = doc(db, "users", user.uid);
-        const snapshot = await getDoc(userRef);
+      const ref = doc(db, "users", user.uid);
 
-        if (snapshot.exists()) {
-          const data = snapshot.data();
+      const unsubSnapshot = onSnapshot(ref, async (snap) => {
+        await auth.currentUser.reload(); 
 
-          setUserData({
-            nome: data.nome || user.displayName || "Usuário",
-            email: data.email || user.email,
-            fotoURL: data.fotoURL || user.photoURL || null,
-          });
-        } else {
-          setUserData({
-            nome: user.displayName || "Usuário",
-            email: user.email,
-            fotoURL: user.photoURL || null,
-          });
-        }
+        const fresh = auth.currentUser;
+        const data = snap.data() || {};
 
-      } catch (e) {
-        console.log("Erro ao obter dados do usuário:", e);
-      }
+        setUserData({
+          nome: data.nome || fresh.displayName,
+          email: data.email || fresh.email,
+          fotoURL: data.fotoURL || fresh.photoURL || null,
+        });
 
-      setLoading(false);
+        setLoading(false);
+      });
+
+      return () => unsubSnapshot();
     });
 
-    return unsubscribe;
+    return unsubAuth;
   }, []);
 
   if (loading) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { updateProfile, reload } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 
@@ -15,13 +15,11 @@ export default function EditarPerfil({ navigation }) {
     async function loadUser() {
       if (!user) return;
 
-  
       setNome(user.displayName || "");
-      if (user.photoURL) setFotoURL(user.photoURL);
+      setFotoURL(user.photoURL || "");
 
-     
       const ref = doc(db, "users", user.uid);
-      const snap = await getDoc(ref);
+      const snap = await getDoc(ref, { source: "server" });
 
       if (snap.exists()) {
         const data = snap.data();
@@ -37,14 +35,10 @@ export default function EditarPerfil({ navigation }) {
     if (!user) return;
 
     try {
-     
       await updateProfile(user, {
         displayName: nome,
         photoURL: fotoURL || null,
       });
-
-    
-      await reload(user);
 
       await setDoc(doc(db, "users", user.uid), {
         nome,
@@ -52,8 +46,10 @@ export default function EditarPerfil({ navigation }) {
         fotoURL,
       });
 
-      alert("Perfil atualizado!");
-      navigation.goBack();
+      await user.reload();
+
+     
+      navigation.navigate("Perfil", { updated: true });
     } catch (e) {
       console.log(e);
       alert("Erro ao atualizar perfil.");
@@ -67,9 +63,7 @@ export default function EditarPerfil({ navigation }) {
       </Text>
 
       <Image
-        source={
-          fotoURL ? { uri: fotoURL } : require("../assets/image_app.png")
-        }
+        source={fotoURL ? { uri: fotoURL } : require("../assets/image_app.png")}
         style={{
           width: 120,
           height: 120,
