@@ -6,7 +6,9 @@ import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Meditacao({ route }) {
-  const { titulo, descricao, id } = route.params;
+  const { id, titulo, descricao, conteudo} = route.params;
+
+  const textoFinal = conteudo || content;
 
   const [saving, setSaving] = useState(false);
   const [isFavorito, setIsFavorito] = useState(false);
@@ -14,7 +16,6 @@ export default function Meditacao({ route }) {
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
 
-  
   useEffect(() => {
     async function checkFavorito() {
       const stored = await AsyncStorage.getItem("favoritos");
@@ -33,7 +34,7 @@ export default function Meditacao({ route }) {
     const lista = stored ? JSON.parse(stored) : [];
 
     if (!lista.some((i) => i.id === id)) {
-      lista.push({ id, titulo, descricao });
+      lista.push({ id, titulo, descricao, conteudo: textoFinal });
       await AsyncStorage.setItem("favoritos", JSON.stringify(lista));
     }
 
@@ -59,11 +60,14 @@ export default function Meditacao({ route }) {
       <Text style={styles.title}>{titulo}</Text>
       <Text style={styles.text}>{descricao}</Text>
 
-   
+      <Text style={[styles.text, { marginTop: 20, lineHeight: 22 }]}>
+        {textoFinal}
+      </Text>
+
       <TouchableOpacity
         style={[
           styles.button,
-          { backgroundColor: isFavorito ? "#C0392B" : "#4A8E7F", marginTop: 20 },
+          { backgroundColor: isFavorito ? "#C0392B" : "#4A8E7F", marginTop: 30 },
         ]}
         onPress={isFavorito ? removerFavorito : salvarFavorito}
       >

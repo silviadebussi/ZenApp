@@ -7,7 +7,7 @@ import CardMeditacao from "../components/CardMeditacao";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 
-export default function Favoritos() {
+export default function Favoritos({ navigation }) {
   const [favoritos, setFavoritos] = useState([]);
   const theme = useColorScheme();
   const styles = getGlobalStyles(theme === "dark");
@@ -41,10 +41,24 @@ export default function Favoritos() {
         }
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <CardMeditacao titulo={item.titulo} descricao={item.descricao} />
+            <CardMeditacao
+              titulo={item.titulo}
+              descricao={item.descricao}
+              onPress={() =>
+                navigation.navigate("Meditacao", {
+                  id: item.id,
+                  titulo: item.titulo,
+                  descricao: item.descricao,
+                  conteudo: item.conteudo,
+                })
+              }
+            />
 
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: "#C45555", marginTop: 12 }]}
+              style={[
+                styles.button,
+                { backgroundColor: "#C45555", marginTop: 12 },
+              ]}
               onPress={() => removerFavorito(item.id)}
             >
               <Text style={styles.buttonText}>Remover</Text>
