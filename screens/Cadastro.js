@@ -6,11 +6,17 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db } from "../firebaseConfig";
 import { doc, setDoc } from "firebase/firestore";
+import getGlobalStyles from "../styles/global";
+import { useColorScheme } from "react-native";
 
 export default function Cadastro({ navigation }) {
+  const theme = useColorScheme();
+  const styles = getGlobalStyles(theme === "dark");
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -46,30 +52,47 @@ export default function Cadastro({ navigation }) {
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text>Nome</Text>
-      <TextInput value={nome} onChangeText={setNome} />
+    <SafeAreaView style={styles.screen}>
+      <Text style={styles.title}>Criar Conta</Text>
 
-      <Text>Email</Text>
-      <TextInput value={email} onChangeText={setEmail} autoCapitalize="none" />
+      <View style={styles.card}>
+        <TextInput
+          placeholder="Nome completo"
+          placeholderTextColor="#999"
+          style={styles.input}
+          value={nome}
+          onChangeText={setNome}
+        />
 
-      <Text>Senha</Text>
-      <TextInput
-        value={senha}
-        secureTextEntry
-        onChangeText={setSenha}
-      />
+        <TextInput
+          placeholder="Email"
+          placeholderTextColor="#999"
+          autoCapitalize="none"
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <TouchableOpacity onPress={registrar} style={{ marginTop: 15 }}>
-        <Text>Cadastrar</Text>
-      </TouchableOpacity>
+        <TextInput
+          placeholder="Senha"
+          placeholderTextColor="#999"
+          style={styles.input}
+          secureTextEntry
+          value={senha}
+          onChangeText={setSenha}
+        />
 
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Login")}
-        style={{ marginTop: 15 }}
-      >
-        <Text>Já tenho conta</Text>
-      </TouchableOpacity>
-    </View>
+        <TouchableOpacity style={styles.button} onPress={registrar}>
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Login")}
+          style={{ marginTop: 10 }}
+        >
+          <Text style={styles.text}>Já tenho conta</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }

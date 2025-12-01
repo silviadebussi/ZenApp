@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, Linking } from "react-native";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,9 +23,10 @@ export default function Alongamentos() {
       const data = await response.json();
 
       const random = data[Math.floor(Math.random() * data.length)];
-
       setPose(random);
+
     } catch (e) {
+      console.log("ERRO:", e);
       setError(true);
     } finally {
       setLoading(false);
@@ -35,6 +36,18 @@ export default function Alongamentos() {
   useEffect(() => {
     fetchPose();
   }, []);
+
+  const getImageUrl = () => {
+    if (!pose?.img_url || pose.img_url.length === 0) return null;
+    return pose.img_url[0].url;
+  };
+
+  const abrirGoogle = () => {
+    if (!pose?.english_name) return;
+    const query = encodeURIComponent(pose.english_name + " yoga pose");
+    const url = `https://www.google.com/search?q=${query}`;
+    Linking.openURL(url);
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -62,9 +75,9 @@ export default function Alongamentos() {
 
           <Text style={styles.mutedText}>{pose.sanskrit_name}</Text>
 
-          {pose.img_url && (
+          {getImageUrl() && (
             <Image
-              source={{ uri: pose.img_url }}
+              source={{ uri: getImageUrl() }}
               style={{
                 width: "100%",
                 height: 250,
@@ -74,6 +87,14 @@ export default function Alongamentos() {
               resizeMode="cover"
             />
           )}
+
+          
+          <TouchableOpacity
+            onPress={abrirGoogle}
+            style={[styles.button, { marginTop: 20 }]}
+          >
+            <Text style={styles.buttonText}>Pesquisar no Google</Text>
+          </TouchableOpacity>
         </View>
       )}
 

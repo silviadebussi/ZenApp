@@ -14,15 +14,13 @@ export default function Login({ navigation }) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
- const handleLogin = async () => {
-  try {
-    await signInWithEmailAndPassword(auth, email, senha);
-    
-  } catch (err) {
-    setErro("Email ou senha inválidos");
-  }
-};
-
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, senha);
+    } catch (err) {
+      setErro("Email ou senha inválidos");
+    }
+  };
 
   return (
     <SafeAreaView style={styles.screen}>
@@ -52,9 +50,14 @@ export default function Login({ navigation }) {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("Cadastro")}>
-          <Text style={styles.text}>Criar conta</Text>
+    
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "#6C47FF", marginTop: 10 }]}
+          onPress={() => navigation.navigate("Cadastro")}
+        >
+          <Text style={styles.buttonText}>Criar conta</Text>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
