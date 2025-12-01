@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../screens/Home";
 import Favoritos from "../screens/Favoritos";
 import Inspirar from "../screens/inspiracao";
+import Alongamentos from "../screens/Alongamentos";
 import { Image } from "react-native";
 
 const Tab = createBottomTabNavigator();
@@ -32,6 +33,7 @@ export default function TabNavigator() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Inspirar"
         component={Inspirar}
@@ -49,6 +51,25 @@ export default function TabNavigator() {
           ),
         }}
       />
+
+      <Tab.Screen
+        name="Alongamentos"
+        component={Alongamentos}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Image
+              source={require("../assets/alongar.png")}
+              style={{
+                width: 25,
+                height: 25,
+                tintColor: focused ? "#4CAF50" : "#888",
+              }}
+              resizeMode="contain"
+            />
+          ),
+        }}
+      />
+
       <Tab.Screen
         name="Favoritos"
         component={Favoritos}

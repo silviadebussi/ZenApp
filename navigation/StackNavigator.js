@@ -8,6 +8,8 @@ import Cadastro from "../screens/Cadastro";
 import DrawerNavigator from "./DrawerNavigator";
 import Meditacao from "../screens/meditacao";
 import EditarPerfil from "../screens/EditarPerfil";
+import Alongamentos from "../screens/Alongamentos";
+
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,7 @@ export default function StackNavigator() {
           <Stack.Screen name="Menu" component={DrawerNavigator} />
           <Stack.Screen name="Meditacao" component={Meditacao} />
           <Stack.Screen name="EditarPerfil" component={EditarPerfil} />
+          <Stack.Screen name="Alongamentos" component={Alongamentos} />
         </>
       ) : (
         <>

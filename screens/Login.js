@@ -14,14 +14,15 @@ export default function Login({ navigation }) {
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
 
-  const handleLogin = async () => {
-    try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      navigation.replace("Menu");
-    } catch (err) {
-      setErro("Email ou senha inválidos");
-    }
-  };
+ const handleLogin = async () => {
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+    
+  } catch (err) {
+    setErro("Email ou senha inválidos");
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.screen}>
