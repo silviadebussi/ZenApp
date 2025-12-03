@@ -3,6 +3,7 @@ import { View, Text, Image, ActivityIndicator, TouchableOpacity, Linking } from 
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CardMeditacao from "../components/CardMeditacao";
 
 export default function Alongamentos() {
   const [pose, setPose] = useState(null);
@@ -68,34 +69,34 @@ export default function Alongamentos() {
       )}
 
       {!loading && !error && pose && (
-        <View style={styles.card}>
-          <Text style={[styles.text, { fontSize: 20, marginBottom: 10 }]}>
-            {pose.english_name}
-          </Text>
+        <CardMeditacao
+          titulo={pose.english_name}
+          descricao={pose.sanskrit_name}
+          conteudo=""
+          onPress={() => {}}
+        />
+      )}
 
-          <Text style={styles.mutedText}>{pose.sanskrit_name}</Text>
+      {!loading && !error && getImageUrl() && (
+        <Image
+          source={{ uri: getImageUrl() }}
+          style={{
+            width: "100%",
+            height: 250,
+            borderRadius: 12,
+            marginBottom: 20,
+          }}
+          resizeMode="cover"
+        />
+      )}
 
-          {getImageUrl() && (
-            <Image
-              source={{ uri: getImageUrl() }}
-              style={{
-                width: "100%",
-                height: 250,
-                borderRadius: 12,
-                marginTop: 15,
-              }}
-              resizeMode="cover"
-            />
-          )}
-
-          
-          <TouchableOpacity
-            onPress={abrirGoogle}
-            style={[styles.button, { marginTop: 20 }]}
-          >
-            <Text style={styles.buttonText}>Pesquisar no Google</Text>
-          </TouchableOpacity>
-        </View>
+      {!loading && !error && (
+        <TouchableOpacity
+          onPress={abrirGoogle}
+          style={[styles.button, { marginBottom: 15 }]}
+        >
+          <Text style={styles.buttonText}>Pesquisar no Google</Text>
+        </TouchableOpacity>
       )}
 
       {!loading && (

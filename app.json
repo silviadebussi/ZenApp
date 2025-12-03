@@ -14,10 +14,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/cha.png",
         "backgroundColor": "#ADD8E6"
-      }
+      },
+      "package": "com.shyybia.zenapp"
     },
     "ios": {
       "supportsTablet": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fd017519-a9a4-4dc6-aa04-9d673cf063f2"
+      }
     }
   }
 }

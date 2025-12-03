@@ -48,7 +48,6 @@ export default function EditarPerfil({ navigation }) {
 
       await user.reload();
 
-     
       navigation.navigate("Perfil", { updated: true });
     } catch (e) {
       console.log(e);
@@ -57,7 +56,21 @@ export default function EditarPerfil({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}>
+    <SafeAreaView
+      style={{ flex: 1, padding: 20, backgroundColor: "#f5f5f5" }}
+    >
+
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{
+          marginBottom: 15,
+          paddingVertical: 5,
+          width: 60,
+        }}
+      >
+        <Text style={{ fontSize: 16, color: "#4A8E7F" }}>Voltar</Text>
+      </TouchableOpacity>
+
       <Text style={{ fontSize: 24, fontWeight: "bold", marginBottom: 20 }}>
         Editar Perfil
       </Text>

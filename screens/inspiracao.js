@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, TouchableOpacity, Image } from "react-na
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CardMeditacao from "../components/CardMeditacao"; 
 
 export default function Inspirar() {
   const [quotes, setQuotes] = useState([]);
@@ -48,11 +49,10 @@ export default function Inspirar() {
 
       {error && (
         <Text style={[styles.text, { marginBottom: 20 }]}>
-          Erro ao carregar frases 😓
+          Erro ao carregar frases
         </Text>
       )}
 
-     
       {!loading && (
         <Image
           source={require("../assets/zen.png")}
@@ -66,14 +66,13 @@ export default function Inspirar() {
         />
       )}
 
-      {!loading && !error && (
-        <View style={styles.card}>
-          {quotes.map((q, i) => (
-            <Text key={i} style={styles.text}>
-              “{q}”
-            </Text>
-          ))}
-        </View>
+   
+      {!loading && !error && quotes.length > 0 && (
+        <CardMeditacao
+          titulo="Mensagem do Dia"
+          descricao={`“${quotes[0]}”`}
+          onPress={() => {}}
+        />
       )}
 
       {!loading && (

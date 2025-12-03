@@ -1,12 +1,11 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-export default function CardMeditacao({ titulo, descricao, conteudo, onPress }) {
+export default function CardMeditacao({ titulo, descricao, onPress }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Text style={styles.titulo}>{titulo}</Text>
       <Text style={styles.desc}>{descricao}</Text>
-      <Text style={styles.desc}>{conteudo} </Text>
     </TouchableOpacity>
   );
 }
