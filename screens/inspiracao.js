@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, ActivityIndicator, TouchableOpacity, Image } from "react-native";
 import getGlobalStyles from "../styles/global";
 import { useColorScheme } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -37,7 +37,6 @@ export default function Inspirar() {
   return (
     <SafeAreaView style={styles.screen}>
 
-     
       {loading && (
         <View style={{ alignItems: "center", marginBottom: 20 }}>
           <ActivityIndicator size="large" color="#4A8E7F" />
@@ -47,14 +46,26 @@ export default function Inspirar() {
         </View>
       )}
 
-    
       {error && (
         <Text style={[styles.text, { marginBottom: 20 }]}>
           Erro ao carregar frases 😓
         </Text>
       )}
 
-      
+     
+      {!loading && (
+        <Image
+          source={require("../assets/zen.png")}
+          style={{
+            width: 140,
+            height: 140,
+            alignSelf: "center",
+            marginBottom: 20,
+            opacity: 0.9
+          }}
+        />
+      )}
+
       {!loading && !error && (
         <View style={styles.card}>
           {quotes.map((q, i) => (
@@ -65,12 +76,12 @@ export default function Inspirar() {
         </View>
       )}
 
-   
       {!loading && (
         <TouchableOpacity style={styles.button} onPress={fetchQuotes}>
           <Text style={styles.buttonText}>Atualizar</Text>
         </TouchableOpacity>
       )}
+
     </SafeAreaView>
   );
 }
